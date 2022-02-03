@@ -1,37 +1,50 @@
 import telebot
-from telegram.ext import Updater, commandhandler, messagehandler, filters
+from flask import Flask, request
 import os
 
-TOKEN = telebot.TeleBot("5038866075:AAEIhqiNHq6HTq_3KWgGq8cRe1XacK9mPmk")
+TOKEN = "5038866075:AAEIhqiNHq6HTq_3KWgGq8cRe1XacK9mPmk"
+bot = telebot.TeleBot(token=TOKEN)
+server = Flask(__name__)
 
-def start(update, context):
-    yourname = update.message.chat.first_name
-    msg ="Hi" + yourname+"! Welcome to the mimic bot!"
-    context.bot.send_message(update.message.chat.id, msg)
 
-def mimic(update, context):
-    context.bot.send_message(update.bot.message.chat.id, update.message.text)
+def findat(msg):
+    # from a list of texts, it finds the one with the '@' sign
+    for i in msg:
+        if '@' in i:
+            return i
 
-def details(update, context):
-    context.bot.send_message(update.message.chat.id, update.message)
+@bot.message_handler(commands=['start']) # welcome message handler
+def send_welcome(message):
+    bot.reply_to(message, '(placeholder text)')
 
-def error(update, context):
-    context.bot.send_message(update.message.chat.id, "Oops error encountered!")
+@bot.message_handler(commands=['help']) # help message handler
+def send_welcome(message):
+    bot.reply_to(message, 'ALPHA = FEATURES MAY NOT WORK')
 
-def main():
-    updater = Updater(token=TOKEN)
-    dp = updater.dispatcher
+@bot.message_handler(func=lambda msg: msg.text is not None and '@' in msg.text)
+# lambda function finds messages with the '@' sign in them
+# in case msg.text doesn't exist, the handler doesn't process it
+def at_converter(message):
+    texts = message.text.split()
+    at_text = findat(texts)
+    if at_text == '@': # in case it's just the '@', skip
+        pass
+    else:
+        insta_link = "https://instagram.com/{}".format(at_text[1:])
+        bot.reply_to(message, insta_link)
 
-    dp.add_handler(commandhandler("/start", start))
-    dp.add_handler(messagehandler(filter.text, mimic))
-    dp.add_handler(commandhandler("/details", details))
-    dp.add_handler(error)
+@server.route('/' + TOKEN, methods=['POST'])
+def getMessage():
+    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+    return "!", 200
 
-    #WEBHOOK
-    updater.start_webhook(listen="0.0.0.0", port=os.environ.get("PORT", 443),
-                          url_path=TOKEN,
-                          webhook_url="https://payhowtest.herokuapp.com"+TOKEN)
-    updater.idle()
+
+@server.route("/")
+def webhook():
+    bot.remove_webhook()
+    bot.set_webhook(url='https://payhowtest.herokuapp.com/' + TOKEN)
+    return "!", 200
+
 
 if __name__ == "__main__":
-    main()
+    server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
