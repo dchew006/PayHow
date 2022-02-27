@@ -15,7 +15,7 @@ def findat(msg):
 
 @bot.message_handler(commands=['start']) # welcome message handler
 def send_welcome(message):
-    bot.reply_to(message, '(hello this is telebot)')
+    bot.reply_to(message, '(hello this is JOHN CENA!)')
 
 @bot.message_handler(commands=['help']) # help message handler
 def send_welcome(message):
