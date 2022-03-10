@@ -13,3 +13,4 @@ urllib3==1.26.5
 Werkzeug==2.0.2
 numpy==1.22.1
 pandas==1.4.0
+regex==2022.1.18
