@@ -1,4 +1,6 @@
 # PayHow
+<img src="https://github.com/dchew006/PayHow/blob/master/payhow.jpeg" width="400">
+
 Payhow before you Paynow! Telegram bot aimed to make splitting the bill with friends a whole lot easier
 
 ## What does it do and who is it for?
@@ -7,6 +9,8 @@ split the bill evenly at the end of the night? Yea, long gone are the days of me
 
 This bot is designed to take separate payment entries and return an even repayment structure in the most efficient
 way possible. It is meant to work in telegram groups where bills are usually discussed.
+
+<img src="https://github.com/dchew006/PayHow/blob/master/example.png" width="1000">
 
 ## Features
 1. Minimum cashflow algorithm to intelligently net off repayments to reduce the number of transactions within the group
